@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import os
+import json
 import subprocess
+
 from paho.mqtt import client as mqtt_client
 
 mqqt_broker = os.environ['PWRSTAT_MQTT_BROKER']
@@ -38,10 +40,9 @@ def get_ups_status():
     status["load_percent"] = data["Load"].split()[1].split('(')[1]
     return status
 
-def publish_status(topic_base, status):
+def publish_status(topic, status):
     client = connect_mqtt();
-    for key, value in status.items():
-        client.publish(topic_base + "/" + key, value)
+    client.publish(topic, json.dumps(status))
 
 if __name__ == '__main__':
     status = get_ups_status()
